@@ -31,7 +31,6 @@ def clean_feedback(text: str) -> str:
     import re
     original_text = text.strip()
 
-    # 1️⃣  Удаляем служебные маркеры и разметку
     text = re.sub(r"Suggested\s*Band\s*Score\s*\([^)]*\)", "", text, flags=re.I)
     text = re.sub(r"\(Vocabulary\):?,?", "", text, flags=re.I)
     text = re.sub(r"Overall\s*Band\s*Score[:\s\.0-9]*", "", text, flags=re.I)
@@ -40,7 +39,6 @@ def clean_feedback(text: str) -> str:
     text = re.sub(r"[-–•]\s*", "", text)
     text = re.sub(r"\s{2,}", " ", text).strip()
 
-    # 2️⃣  Исправляем типовые ошибки и повторы
     fixes = {
         "a some": "some",
         "grammarulation": "grammar and formulation",
@@ -50,7 +48,6 @@ def clean_feedback(text: str) -> str:
     for wrong, right in fixes.items():
         text = text.replace(wrong, right)
 
-    # 3️⃣  Убираем повторяющиеся фразы по смыслу
     sentences = re.split(r'(?<=[.!?])\s+', text)
     unique = []
     for s in sentences:
@@ -62,7 +59,6 @@ def clean_feedback(text: str) -> str:
         unique.append(s_clean)
     text = " ".join(unique)
 
-    # 4️⃣  Финальное форматирование
     text = re.sub(r"\s+", " ", text).strip()
     if text and text[0].islower():
         text = text[0].upper() + text[1:]
@@ -74,9 +70,7 @@ def clean_feedback(text: str) -> str:
 def remove_scores(text: str) -> str:
     """Удаляет все числовые оценки (6, 6.5, 7.0, 8.5 и т.п.) из текста."""
     import re
-    # Убираем типичные конструкции вроде: "Band Score: 6.5", ": 7", "Score 8", "6.0"
     text = re.sub(r"(Band\s*Score[:=]?\s*)?\b\d+(\.\d+)?\b", "", text, flags=re.I)
-    # Чистим двойные пробелы и висячие знаки
     text = re.sub(r"\s{2,}", " ", text)
     text = re.sub(r"\s+([.,])", r"\1", text)
     return text.strip()
@@ -85,12 +79,12 @@ def remove_scores(text: str) -> str:
 def light_clean_feedback(text: str) -> str:
     """Удаляет оценки, символы форматирования и вспомогательные маркеры."""
     import re
-    text = re.sub(r"\b\d+(\.\d+)?\b", "", text)  # убирает любые числа типа 6 или 6.5
+    text = re.sub(r"\b\d+(\.\d+)?\b", "", text)  
     text = re.sub(r"Suggested\s*Band\s*Score[:=]?", "", text, flags=re.I)
     text = re.sub(r"Lexical Resource\s*\(.*?\)\s*:", "Lexical Resource:", text, flags=re.I)
     text = re.sub(r"Feedback and Additional Comments:", "", text, flags=re.I)
     text = re.sub(r"Suggestions for Improvement:", "", text, flags=re.I)
-    text = re.sub(r"\*", "", text)  # убирает звёздочки
+    text = re.sub(r"\*", "", text) 
     text = re.sub(r"\s{2,}", " ", text).strip()
     return text
 
@@ -142,3 +136,4 @@ while True:
     feedback = generate_feedback(essay_text)
     print("\n Feedback:\n", feedback)
     print("-" * 80)
+
